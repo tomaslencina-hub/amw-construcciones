@@ -13,201 +13,277 @@
     <title>Presupuesto AMW</title>
   </head>
 <body>
-  <div class="app-container">
+  <div class="app-shell">
 
-    <header class="header">
-      <img src="src/assets/AMW-logo-header.jpeg" alt="Logo AMW" class="logo" />
-      <div>
-        <h1>Presupuestos A.M.W.</h1>
-        <p class="subtitle">Sistema de presupuestos</p>
-      </div>
-    </header>
-
-    <div class="dashboard">
-
-      <!-- IZQUIERDA -->
-      <div class="left-column">
-
-        <!-- Mano de obra -->
-        <div class="card card-labor">
-          <h2>
-            <span class="icon-badge icon-labor" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 14a8 8 0 0 1 16 0" />
-                <rect x="2" y="14" width="20" height="3.2" rx="1.4" />
-                <line x1="12" y1="5.5" x2="12" y2="9" />
-              </svg>
-            </span>
-            Mano de Obra
-          </h2>
-
-          <div class="grid-header">
-            <span>Descripción</span>
-            <span>Cant</span>
-            <span>Unidad</span>
-            <span>Precio</span>
-            <span>Total</span>
-            <span></span>
-          </div>
-
-          <div id="tabla-mano-obra"></div>
-
-          <button id="add-mano-obra" class="btn-primary">
-            + Agregar tarea
-          </button>
+    <!-- Menú lateral -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <img src="src/assets/AMW-logo-header.jpeg" alt="Logo AMW" class="sidebar-logo" />
+        <div>
+          <strong>A.M.W.</strong>
+          <span>Sistema de presupuestos</span>
         </div>
-
-        <!-- Materiales -->
-        <div class="card card-materials">
-          <h2>
-            <span class="icon-badge icon-materials" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <rect x="2" y="5" width="8" height="5" rx="1" />
-                <rect x="11.5" y="5" width="10.5" height="5" rx="1" />
-                <rect x="6" y="12" width="8" height="5" rx="1" />
-                <rect x="15.5" y="12" width="6.5" height="5" rx="1" />
-                <rect x="2" y="12" width="3" height="5" rx="1" />
-              </svg>
-            </span>
-            Materiales
-          </h2>
-
-          <div class="grid-header">
-            <span>Descripción</span>
-            <span>Cant</span>
-            <span>Unidad</span>
-            <span>Precio</span>
-            <span>Total</span>
-            <span></span>
-          </div>
-
-          <div id="tabla-materiales"></div>
-
-          <button id="add-materiales" class="btn-secondary">
-            + Agregar material
-          </button>
-        </div>
-
       </div>
 
-      <!-- DERECHA -->
-      <div class="right-column">
+      <div class="sidebar-nav">
+        <button class="nav-item active" data-view="presupuesto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z" />
+            <line x1="9" y1="8" x2="15" y2="8" />
+            <line x1="9" y1="12" x2="15" y2="12" />
+          </svg>
+          Presupuesto
+        </button>
 
-      <!-- Cliente -->
-      <div class="card sticky-card">
+        <button class="nav-item" data-view="clientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M3 20c0-3 2.5-5 6-5s6 2 6 5" />
+            <circle cx="17.5" cy="9" r="2.3" />
+            <path d="M15.8 20c.2-2.1 1.5-3.7 3.4-4.2" />
+          </svg>
+          Clientes
+        </button>
 
-        <h2>
-          <span class="icon-badge icon-client" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="5" y="4" width="14" height="17" rx="2" />
-              <rect x="9" y="2" width="6" height="4" rx="1" />
-              <line x1="8" y1="11" x2="16" y2="11" />
-              <line x1="8" y1="15" x2="14" y2="15" />
-            </svg>
-          </span>
-          Datos del Cliente
-        </h2>
-
-        <div class="input-group">
-          <label>Cliente</label>
-          <input
-            type="text"
-            id="cliente"
-            placeholder="Nombre completo"
-          >
-        </div>
-
-        <div class="input-group">
-          <label>Fecha</label>
-          <input
-            type="date"
-            id="fecha"
-          >
-        </div>
-
-        <div class="input-group">
-          <label>Observaciones</label>
-
-          <textarea
-            id="observaciones"
-            rows="5"
-            placeholder="Ej: El presupuesto no incluye pintura, plazo estimado 15 días, etc."
-          ></textarea>
-        </div>
-
+        <button class="nav-item" data-view="proveedores">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="7" width="13" height="9" rx="1" />
+            <path d="M14 10h4l3 3v3h-7z" />
+            <circle cx="6" cy="18" r="1.6" />
+            <circle cx="17.5" cy="18" r="1.6" />
+          </svg>
+          Proveedores
+        </button>
       </div>
+    </nav>
 
-        <!-- Totales -->
-        <div class="card total-container sticky-card">
+    <!-- Contenido -->
+    <div class="app-main">
 
-          <h2>
-            <span class="icon-badge icon-summary" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z" />
-                <line x1="9" y1="8" x2="15" y2="8" />
-                <line x1="9" y1="12" x2="15" y2="12" />
-              </svg>
-            </span>
-            Resumen
-          </h2>
+      <!-- Vista: Presupuesto -->
+      <section class="view" id="view-presupuesto">
+        <h1 class="view-title">Presupuesto</h1>
 
-          <div class="total-row">
-            <span>Mano de Obra</span>
-            <strong id="sub-mano">
-              $ 0.00
-            </strong>
+        <div class="dashboard">
+
+          <!-- IZQUIERDA -->
+          <div class="left-column">
+
+            <!-- Mano de obra -->
+            <div class="card card-labor">
+              <h2>
+                <span class="icon-badge icon-labor" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 14a8 8 0 0 1 16 0" />
+                    <rect x="2" y="14" width="20" height="3.2" rx="1.4" />
+                    <line x1="12" y1="5.5" x2="12" y2="9" />
+                  </svg>
+                </span>
+                Mano de Obra
+              </h2>
+
+              <div class="grid-header">
+                <span>Descripción</span>
+                <span>Cant</span>
+                <span>Unidad</span>
+                <span>Precio</span>
+                <span>Total</span>
+                <span></span>
+              </div>
+
+              <div id="tabla-mano-obra"></div>
+
+              <button id="add-mano-obra" class="btn-primary">
+                + Agregar tarea
+              </button>
+            </div>
+
+            <!-- Materiales -->
+            <div class="card card-materials">
+              <h2>
+                <span class="icon-badge icon-materials" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="2" y="5" width="8" height="5" rx="1" />
+                    <rect x="11.5" y="5" width="10.5" height="5" rx="1" />
+                    <rect x="6" y="12" width="8" height="5" rx="1" />
+                    <rect x="15.5" y="12" width="6.5" height="5" rx="1" />
+                    <rect x="2" y="12" width="3" height="5" rx="1" />
+                  </svg>
+                </span>
+                Materiales
+              </h2>
+
+              <div class="grid-header">
+                <span>Descripción</span>
+                <span>Cant</span>
+                <span>Unidad</span>
+                <span>Precio</span>
+                <span>Total</span>
+                <span></span>
+              </div>
+
+              <div id="tabla-materiales"></div>
+
+              <button id="add-materiales" class="btn-secondary">
+                + Agregar material
+              </button>
+            </div>
+
           </div>
 
-          <div class="total-row">
-            <span>Materiales</span>
-            <strong id="sub-materiales">
-              $ 0.00
-            </strong>
+          <!-- DERECHA -->
+          <div class="right-column">
+
+          <!-- Cliente -->
+          <div class="card sticky-card">
+
+            <h2>
+              <span class="icon-badge icon-client" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="4" width="14" height="17" rx="2" />
+                  <rect x="9" y="2" width="6" height="4" rx="1" />
+                  <line x1="8" y1="11" x2="16" y2="11" />
+                  <line x1="8" y1="15" x2="14" y2="15" />
+                </svg>
+              </span>
+              Datos del Cliente
+            </h2>
+
+            <div class="input-group">
+              <label>Cliente</label>
+              <input
+                type="text"
+                id="cliente"
+                placeholder="Nombre completo"
+              >
+            </div>
+
+            <div class="input-group">
+              <label>Fecha</label>
+              <input
+                type="date"
+                id="fecha"
+              >
+            </div>
+
+            <div class="input-group">
+              <label>Observaciones</label>
+
+              <textarea
+                id="observaciones"
+                rows="5"
+                placeholder="Ej: El presupuesto no incluye pintura, plazo estimado 15 días, etc."
+              ></textarea>
+            </div>
+
           </div>
 
-          <hr>
+            <!-- Totales -->
+            <div class="card total-container sticky-card">
 
-          <div class="total-row final">
-            <span>Total</span>
-            <strong id="total-final">
-              $ 0.00
-            </strong>
-          </div>
+              <h2>
+                <span class="icon-badge icon-summary" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z" />
+                    <line x1="9" y1="8" x2="15" y2="8" />
+                    <line x1="9" y1="12" x2="15" y2="12" />
+                  </svg>
+                </span>
+                Resumen
+              </h2>
 
-          <div class="acciones">
+              <div class="total-row">
+                <span>Mano de Obra</span>
+                <strong id="sub-mano">
+                  $ 0.00
+                </strong>
+              </div>
 
-            <button id="btn-preview" class="btn-preview">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              Vista previa
-            </button>
+              <div class="total-row">
+                <span>Materiales</span>
+                <strong id="sub-materiales">
+                  $ 0.00
+                </strong>
+              </div>
 
-            <button id="btn-pdf" class="btn-generar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <path d="M14 2v6h6" />
-                <path d="M9 13l3 3 3-3" />
-                <line x1="12" y1="11" x2="12" y2="16" />
-              </svg>
-              Descargar PDF
-            </button>
+              <hr>
 
-            <button id="btn-print" class="btn-print">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 9V3h12v6" />
-                <rect x="4" y="9" width="16" height="8" rx="1" />
-                <path d="M6 17v4h12v-4" />
-              </svg>
-              Imprimir
-            </button>
+              <div class="total-row final">
+                <span>Total</span>
+                <strong id="total-final">
+                  $ 0.00
+                </strong>
+              </div>
+
+              <div class="acciones">
+
+                <button id="btn-preview" class="btn-preview">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Vista previa
+                </button>
+
+                <button id="btn-pdf" class="btn-generar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M9 13l3 3 3-3" />
+                    <line x1="12" y1="11" x2="12" y2="16" />
+                  </svg>
+                  Descargar PDF
+                </button>
+
+                <button id="btn-print" class="btn-print">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9V3h12v6" />
+                    <rect x="4" y="9" width="16" height="8" rx="1" />
+                    <path d="M6 17v4h12v-4" />
+                  </svg>
+                  Imprimir
+                </button>
+
+              </div>
+
+            </div>
 
           </div>
 
         </div>
+      </section>
 
-      </div>
+      <!-- Vista: Clientes (placeholder) -->
+      <section class="view" id="view-clientes" hidden>
+        <h1 class="view-title">Clientes</h1>
+
+        <div class="card empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M3 20c0-3 2.5-5 6-5s6 2 6 5" />
+            <circle cx="17.5" cy="9" r="2.3" />
+            <path d="M15.8 20c.2-2.1 1.5-3.7 3.4-4.2" />
+          </svg>
+          <p>Todavía no hay historial de clientes</p>
+          <span>Acá vas a poder ver los presupuestos generados para cada cliente.</span>
+        </div>
+      </section>
+
+      <!-- Vista: Proveedores (placeholder) -->
+      <section class="view" id="view-proveedores" hidden>
+        <h1 class="view-title">Proveedores</h1>
+
+        <div class="card empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="7" width="13" height="9" rx="1" />
+            <path d="M14 10h4l3 3v3h-7z" />
+            <circle cx="6" cy="18" r="1.6" />
+            <circle cx="17.5" cy="18" r="1.6" />
+          </svg>
+          <p>Próximamente</p>
+          <span>Acá vas a poder gestionar tu listado de proveedores.</span>
+        </div>
+      </section>
 
     </div>
 

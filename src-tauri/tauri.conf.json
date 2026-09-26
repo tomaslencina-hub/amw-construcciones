@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "presupuesto-amw",
+  "productName": "A.M.W",
   "version": "0.1.0",
   "identifier": "com.tomas.presupuesto-amw",
   "build": {
@@ -13,9 +13,10 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "presupuesto-amw",
-        "width": 800,
-        "height": 600
+        "title": "A.M.W.",
+        "width": 1200,
+        "height": 800,
+        "maximized": true
       }
     ],
     "security": {
