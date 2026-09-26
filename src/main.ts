@@ -10,6 +10,11 @@ import {
   cerrarPreview,
 } from "./components/preview";
 
+import { comprobarActualizaciones } from "./components/updater";
+import { initNavegacion } from "./components/navegacion";
+
+comprobarActualizaciones();
+initNavegacion();
 initFormulario();
 
 // Vista previa (ahora es el PDF real, dentro de un iframe)
