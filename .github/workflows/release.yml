@@ -1,9 +1,12 @@
 name: 'Publicar actualización'
 
+# Producción: cada push a "main" compila la versión normal y deja un
+# release en borrador, que se publica a mano para que llegue a los usuarios.
+# Circuito: develop (desarrollo) -> test (pruebas) -> main (producción)
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   publish-tauri:

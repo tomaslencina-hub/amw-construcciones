@@ -1,0 +1,53 @@
+name: 'Publicar versión de test'
+
+# Cada push a la rama "test" compila la app con la config de test
+# (src-tauri/tauri.test.conf.json) y la publica como pre-release "test-latest".
+# La app de test busca actualizaciones justo ahí, y al ser pre-release la
+# versión de producción nunca la toma como "la última".
+on:
+  push:
+    branches:
+      - test
+  workflow_dispatch:
+
+jobs:
+  publish-tauri-test:
+    permissions:
+      contents: write
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install frontend dependencies
+        run: npm install
+
+      # Se borra el pre-release anterior para que "test-latest" tenga siempre
+      # solo la última versión (y la etiqueta apunte al commit nuevo)
+      - name: borrar test-latest anterior
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete test-latest --cleanup-tag --yes || true
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          args: --config src-tauri/tauri.test.conf.json
+          tagName: 'test-latest'
+          releaseName: 'Presupuestos A.M.W. (Test) v__VERSION__'
+          releaseBody: 'Versión de prueba. No usar en producción.'
+          releaseDraft: false
+          prerelease: true
