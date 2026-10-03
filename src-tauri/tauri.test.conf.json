@@ -1,0 +1,23 @@
+{
+  "productName": "Presupuestos AMW (Test)",
+  "identifier": "com.tomas.presupuesto-amw.test",
+  "app": {
+    "windows": [
+      {
+        "title": "Presupuestos A.M.W. (TEST)",
+        "width": 1200,
+        "height": 800,
+        "maximized": true,
+        "decorations": false
+      }
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERCRDQ0QkFGRkEyOTMyMUYKUldRZk1pbjZyMHZVMnoxN0g2bFRlK0pZQU9wZExYM0ZreTlGYUduR2UrUG1xY0VoUktGcFFOaGUK",
+      "endpoints": [
+        "https://github.com/tomaslencina-hub/amw-construcciones/releases/download/test-latest/latest.json"
+      ]
+    }
+  }
+}

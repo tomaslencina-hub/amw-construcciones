@@ -5,7 +5,10 @@ import { construirPDF } from "./pdf";
 // cada vez que se abre una vista previa nueva o se cierra el modal.
 let blobUrlActual: string | null = null;
 
-export async function mostrarPreview(datos: DatosPresupuesto) {
+export async function mostrarPreview(
+  datos: DatosPresupuesto,
+  fechaGeneracion?: Date
+) {
   const modal = document.getElementById("modal-preview")!;
   const contenido = document.getElementById("preview-content")!;
 
@@ -13,7 +16,7 @@ export async function mostrarPreview(datos: DatosPresupuesto) {
   contenido.innerHTML = `<div class="preview-loading">Generando vista previa…</div>`;
 
   try {
-    const doc = await construirPDF(datos);
+    const doc = await construirPDF(datos, fechaGeneracion);
 
     if (blobUrlActual) {
       URL.revokeObjectURL(blobUrlActual);

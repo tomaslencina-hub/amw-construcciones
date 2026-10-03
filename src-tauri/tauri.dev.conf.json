@@ -1,0 +1,15 @@
+{
+  "productName": "Presupuestos AMW (Dev)",
+  "identifier": "com.tomas.presupuesto-amw.dev",
+  "app": {
+    "windows": [
+      {
+        "title": "Presupuestos A.M.W. (DEV)",
+        "width": 1200,
+        "height": 800,
+        "maximized": true,
+        "decorations": false
+      }
+    ]
+  }
+}

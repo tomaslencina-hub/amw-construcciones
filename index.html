@@ -55,10 +55,30 @@
           Proveedores
         </button>
       </div>
+
+      <!-- Cierra la app (la ventana no tiene barra de título propia) -->
+      <button id="btn-cerrar-app" class="btn-cerrar-app">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v9" />
+          <path d="M6.3 7.2a8 8 0 1 0 11.4 0" />
+        </svg>
+        Cerrar
+      </button>
     </nav>
 
     <!-- Contenido -->
     <div class="app-main">
+
+      <!-- Barra superior: se puede arrastrar para mover la ventana -->
+      <div class="app-topbar" data-tauri-drag-region>
+        <button id="btn-minimizar" class="btn-minimizar" aria-label="Minimizar" title="Minimizar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <line x1="6" y1="12" x2="18" y2="12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="app-content">
 
       <!-- Vista: Presupuesto -->
       <section class="view" id="view-presupuesto">
@@ -69,65 +89,12 @@
           <!-- IZQUIERDA -->
           <div class="left-column">
 
-            <!-- Mano de obra -->
-            <div class="card card-labor">
-              <h2>
-                <span class="icon-badge icon-labor" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 14a8 8 0 0 1 16 0" />
-                    <rect x="2" y="14" width="20" height="3.2" rx="1.4" />
-                    <line x1="12" y1="5.5" x2="12" y2="9" />
-                  </svg>
-                </span>
-                Mano de Obra
-              </h2>
+            <!-- Las tareas se arman dinámicamente en formulario.ts -->
+            <div id="tareas-contenedor"></div>
 
-              <div class="grid-header">
-                <span>Descripción</span>
-                <span>Cant</span>
-                <span>Unidad</span>
-                <span>Precio</span>
-                <span>Total</span>
-                <span></span>
-              </div>
-
-              <div id="tabla-mano-obra"></div>
-
-              <button id="add-mano-obra" class="btn-primary">
-                + Agregar tarea
-              </button>
-            </div>
-
-            <!-- Materiales -->
-            <div class="card card-materials">
-              <h2>
-                <span class="icon-badge icon-materials" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="2" y="5" width="8" height="5" rx="1" />
-                    <rect x="11.5" y="5" width="10.5" height="5" rx="1" />
-                    <rect x="6" y="12" width="8" height="5" rx="1" />
-                    <rect x="15.5" y="12" width="6.5" height="5" rx="1" />
-                    <rect x="2" y="12" width="3" height="5" rx="1" />
-                  </svg>
-                </span>
-                Materiales
-              </h2>
-
-              <div class="grid-header">
-                <span>Descripción</span>
-                <span>Cant</span>
-                <span>Unidad</span>
-                <span>Precio</span>
-                <span>Total</span>
-                <span></span>
-              </div>
-
-              <div id="tabla-materiales"></div>
-
-              <button id="add-materiales" class="btn-secondary">
-                + Agregar material
-              </button>
-            </div>
+            <button id="add-tarea" class="btn-agregar-tarea">
+              + Agregar tarea
+            </button>
 
           </div>
 
@@ -135,7 +102,7 @@
           <div class="right-column">
 
           <!-- Cliente -->
-          <div class="card sticky-card">
+          <div class="card">
 
             <h2>
               <span class="icon-badge icon-client" aria-hidden="true">
@@ -179,7 +146,7 @@
           </div>
 
             <!-- Totales -->
-            <div class="card total-container sticky-card">
+            <div class="card total-container">
 
               <h2>
                 <span class="icon-badge icon-summary" aria-hidden="true">
@@ -253,37 +220,61 @@
         </div>
       </section>
 
-      <!-- Vista: Clientes (placeholder) -->
+      <!-- Vista: Clientes -->
       <section class="view" id="view-clientes" hidden>
-        <h1 class="view-title">Clientes</h1>
-
-        <div class="card empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="8" r="3" />
-            <path d="M3 20c0-3 2.5-5 6-5s6 2 6 5" />
-            <circle cx="17.5" cy="9" r="2.3" />
-            <path d="M15.8 20c.2-2.1 1.5-3.7 3.4-4.2" />
-          </svg>
-          <p>Todavía no hay historial de clientes</p>
-          <span>Acá vas a poder ver los presupuestos generados para cada cliente.</span>
+        <div class="view-header">
+          <h1 class="view-title">Clientes</h1>
+          <span id="clientes-contador" class="view-contador"></span>
         </div>
+
+        <div class="buscador">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="20" y1="20" x2="16" y2="16" />
+          </svg>
+          <input
+            type="search"
+            id="clientes-filtro"
+            placeholder="Buscar por nombre del cliente"
+          >
+        </div>
+
+        <!-- Las filas se arman dinámicamente en clientes.ts -->
+        <div id="clientes-lista" class="clientes-lista"></div>
+
+        <p id="clientes-vacio" class="clientes-vacio" hidden></p>
       </section>
 
       <!-- Vista: Proveedores (placeholder) -->
       <section class="view" id="view-proveedores" hidden>
-        <h1 class="view-title">Proveedores</h1>
-
-        <div class="card empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="7" width="13" height="9" rx="1" />
-            <path d="M14 10h4l3 3v3h-7z" />
-            <circle cx="6" cy="18" r="1.6" />
-            <circle cx="17.5" cy="18" r="1.6" />
-          </svg>
-          <p>Próximamente</p>
-          <span>Acá vas a poder gestionar tu listado de proveedores.</span>
+        <div class="view-header">
+          <h1 class="view-title">Proveedores</h1>
+          <button id="btn-nuevo-proveedor" class="btn-primary">
+            + Nuevo proveedor
+          </button>
         </div>
+
+        <!-- Busca un material en todos los proveedores y compara precios -->
+        <div class="buscador">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="20" y1="20" x2="16" y2="16" />
+          </svg>
+          <input
+            type="search"
+            id="buscar-material"
+            placeholder="Buscar un material en todos los proveedores (ej: cable)"
+          >
+        </div>
+
+        <!-- Las tarjetas y resultados se arman dinámicamente en proveedores.ts -->
+        <div id="proveedores-resultados" class="proveedores-resultados" hidden></div>
+        <div id="proveedores-grid" class="proveedores-grid"></div>
+
+        <p id="proveedores-vacio" class="clientes-vacio" hidden></p>
       </section>
+
+      </div>
 
     </div>
 

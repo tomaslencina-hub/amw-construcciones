@@ -1,3 +1,5 @@
+use tauri::Manager;
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -10,6 +12,15 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_sql::Builder::default().build())
+        // Refuerza "decorations: false" de la config: la app dibuja sus
+        // propios botones de minimizar y cerrar.
+        .setup(|app| {
+            if let Some(ventana) = app.get_webview_window("main") {
+                let _ = ventana.set_decorations(false);
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
