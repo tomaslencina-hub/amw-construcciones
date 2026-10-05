@@ -12,7 +12,8 @@ import {
 } from "./components/preview";
 
 import { comprobarActualizaciones } from "./components/updater";
-import { initNavegacion } from "./components/navegacion";
+import { initNavegacion, irAVista } from "./components/navegacion";
+import { confirmar } from "./components/dialogos";
 import { guardarPresupuesto } from "./components/db";
 import { initClientes, refrescarClientes } from "./components/clientes";
 import { initProveedores } from "./components/proveedores";
@@ -24,8 +25,32 @@ import { initEmisor, validarEmisor } from "./components/emisor";
 comprobarActualizaciones();
 initNavegacion();
 initEmisor();
-const { limpiarFormulario } = initFormulario();
-initClientes();
+const { limpiarFormulario, tieneDatosCargados, iniciarParaCliente } =
+  initFormulario();
+
+initClientes({
+  // "Nuevo presupuesto" en la tarjeta de un cliente: va a la carga con ese
+  // cliente ya puesto. Si había otro presupuesto a medio armar, avisa antes
+  // de pisarlo.
+  async onNuevoPresupuesto(cliente) {
+    if (tieneDatosCargados()) {
+      const ok = await confirmar({
+        titulo: "Hay un presupuesto a medio cargar",
+        texto: `Si empezás uno nuevo para "${cliente}" se pierde lo que estaba cargado.`,
+        textoBoton: "Empezar uno nuevo",
+        peligro: true,
+      });
+
+      if (!ok) {
+        return;
+      }
+    }
+
+    irAVista("presupuesto");
+    iniciarParaCliente(cliente);
+  },
+});
+
 initProveedores();
 
 // Vista previa (ahora es el PDF real, dentro de un iframe)

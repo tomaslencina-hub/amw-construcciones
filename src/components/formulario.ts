@@ -304,13 +304,38 @@ export function initFormulario() {
     actualizarTotales();
   }
 
+  // Hay algo cargado que se perdería al empezar otro presupuesto: algún
+  // dato en las tareas o en observaciones. El nombre del cliente solo no
+  // cuenta.
+  function tieneDatosCargados() {
+    const hayEnTareas = Array.from(
+      contenedorTareas.querySelectorAll("input")
+    ).some((input) => !input.readOnly && input.value.trim() !== "");
+
+    const observaciones = (
+      document.getElementById("observaciones") as HTMLTextAreaElement
+    ).value.trim();
+
+    return hayEnTareas || observaciones !== "";
+  }
+
+  // Arranca un presupuesto en blanco con el cliente ya cargado (se usa
+  // desde "Nuevo presupuesto" en la pantalla de Clientes)
+  function iniciarParaCliente(nombre: string) {
+    limpiarFormulario();
+
+    (document.getElementById("cliente") as HTMLInputElement).value = nombre;
+
+    contenedorTareas.querySelector<HTMLInputElement>(".tarea-nombre")?.focus();
+  }
+
   // Arranca con una tarea inicial para no abrir la app vacía
   contenedorTareas.appendChild(crearTarea());
 
   renumerarTareas();
   actualizarTotales();
 
-  return { limpiarFormulario };
+  return { limpiarFormulario, tieneDatosCargados, iniciarParaCliente };
 }
 
 export function obtenerDatosPresupuesto(): DatosPresupuesto {

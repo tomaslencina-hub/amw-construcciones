@@ -694,24 +694,102 @@ body {
 .clientes-lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-.cliente-item {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 16px 18px 16px 20px;
+/* Una tarjeta por cliente: encabezado con sus datos y el botón para
+   armarle un presupuesto nuevo, y debajo todos sus presupuestos */
+.cliente-grupo {
   background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  overflow: hidden;
 }
 
-.cliente-item:hover {
-  border-color: rgba(226, 147, 47, 0.55);
-  transform: translateY(-1px);
+.cliente-grupo-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cliente-presupuestos {
+  padding: 4px 18px 4px 20px;
+}
+
+.presupuesto-fila {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.presupuesto-fila:last-child {
+  border-bottom: none;
+}
+
+.presupuesto-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--color-paper);
+  color: var(--color-muted);
+}
+
+.presupuesto-icono svg {
+  width: 17px;
+  height: 17px;
+}
+
+.presupuesto-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.presupuesto-info strong {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.presupuesto-info span {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.presupuesto-total {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+  padding-right: 6px;
+}
+
+/* "Ver los N presupuestos" / "Ver menos" al pie de la tarjeta */
+.btn-ver-todos {
+  width: 100%;
+  padding: 11px;
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-ink);
+  font-size: 0.85rem;
+}
+
+.btn-ver-todos:hover {
+  color: var(--color-amber);
+  transform: none;
+  filter: none;
 }
 
 .cliente-info {
@@ -733,29 +811,6 @@ body {
 .cliente-meta {
   font-size: 0.82rem;
   color: var(--color-muted);
-}
-
-.cliente-total {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  padding-right: 6px;
-}
-
-.cliente-total span {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-
-.cliente-total strong {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  color: var(--color-ink);
-  white-space: nowrap;
 }
 
 .cliente-acciones {
@@ -781,7 +836,9 @@ body {
   height: 15px;
 }
 
-.btn-fila-descargar {
+/* La acción principal de la tarjeta: nuevo presupuesto para ese cliente */
+.btn-fila-nuevo {
+  flex-shrink: 0;
   background: var(--color-amber);
   border-color: var(--color-amber);
   color: var(--color-ink-dark);

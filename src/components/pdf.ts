@@ -1,3 +1,5 @@
+import { invoke } from "@tauri-apps/api/core";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import jsPDF from "jspdf";
 import autoTable, { type CellDef, type UserOptions } from "jspdf-autotable";
 import type { DatosPresupuesto, ItemPresupuesto } from "./formulario";
@@ -697,6 +699,31 @@ export async function generarPDF(
   fechaGeneracion?: Date
 ): Promise<void> {
   const doc = await construirPDF(datos, fechaGeneracion);
-  doc.save(`Presupuesto-${datos.cliente || "cliente"}.pdf`);
-  mostrarToast("PDF descargado correctamente");
+  const nombre = `Presupuesto-${datos.cliente || "cliente"}`;
+
+  let ruta: string;
+
+  try {
+    // La app guarda el archivo en Descargas (no el navegador interno),
+    // así sabe exactamente dónde quedó
+    ruta = await invoke<string>("guardar_pdf", {
+      nombre,
+      contenido: Array.from(new Uint8Array(doc.output("arraybuffer"))),
+    });
+  } catch (e) {
+    // Si falla, se descarga como antes para no perder el PDF
+    console.warn("No se pudo guardar el PDF en Descargas:", e);
+    doc.save(`${nombre}.pdf`);
+    mostrarToast("PDF descargado correctamente");
+    return;
+  }
+
+  mostrarToast("PDF guardado en Descargas");
+
+  // Abre la carpeta con el PDF seleccionado
+  try {
+    await revealItemInDir(ruta);
+  } catch (e) {
+    console.warn("No se pudo abrir la carpeta del PDF:", e);
+  }
 }
