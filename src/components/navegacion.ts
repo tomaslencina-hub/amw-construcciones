@@ -17,7 +17,7 @@ export function initNavegacion() {
 }
 
 // Cambia de vista desde el código (igual que tocar el botón del menú)
-export function irAVista(vista: "presupuesto" | "clientes" | "proveedores") {
+export function irAVista(vista: "presupuesto" | "clientes" | "proveedores" | "estadisticas") {
   document
     .querySelector<HTMLButtonElement>(`.nav-item[data-view="${vista}"]`)
     ?.click();

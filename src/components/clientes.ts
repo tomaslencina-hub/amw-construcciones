@@ -1,4 +1,10 @@
-import { listarPresupuestos, type PresupuestoGuardado } from "./db";
+import {
+  cambiarEstadoPresupuesto,
+  listarPresupuestos,
+  type EstadoPresupuesto,
+  type PresupuestoGuardado,
+} from "./db";
+import { mostrarToast } from "./toast";
 import { generarPDF } from "./pdf";
 import { mostrarPreview } from "./preview";
 import { crearAvatar, normalizar } from "./utils";
@@ -16,6 +22,20 @@ const ICONO_DESCARGAR = `
     <path d="M14 2v6h6" />
     <path d="M9 13l3 3 3-3" />
     <line x1="12" y1="11" x2="12" y2="16" />
+  </svg>
+`;
+
+const ICONO_EDITAR = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20h4L19 9l-4-4L4 16v4z" />
+    <path d="M13.5 6.5l4 4" />
+  </svg>
+`;
+
+const ICONO_DUPLICAR = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="11" height="11" rx="2" />
+    <path d="M5 15V6a2 2 0 0 1 2-2h9" />
   </svg>
 `;
 
@@ -40,6 +60,10 @@ interface GrupoCliente {
 interface OpcionesClientes {
   // Se llama al tocar "Nuevo presupuesto" en la tarjeta de un cliente
   onNuevoPresupuesto: (cliente: string) => void;
+  // "Editar": abrir el presupuesto para cambiarlo (al guardar lo reemplaza)
+  onEditar: (presupuesto: PresupuestoGuardado) => void;
+  // "Duplicar": usarlo de base para uno nuevo (el original no se toca)
+  onDuplicar: (presupuesto: PresupuestoGuardado) => void;
 }
 
 let presupuestos: PresupuestoGuardado[] = [];
@@ -90,6 +114,11 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
       <strong></strong>
       <span></span>
     </div>
+    <select class="estado-select" aria-label="Estado del presupuesto" title="Respuesta del cliente">
+      <option value="pendiente">Pendiente</option>
+      <option value="aceptado">Aceptado</option>
+      <option value="rechazado">Rechazado</option>
+    </select>
     <strong class="presupuesto-total"></strong>
     <div class="cliente-acciones">
       <button type="button" class="btn-fila btn-fila-ver" title="Vista previa">
@@ -99,6 +128,14 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
       <button type="button" class="btn-fila btn-fila-descargar" title="Descargar PDF">
         ${ICONO_DESCARGAR}
         Descargar
+      </button>
+      <button type="button" class="btn-fila btn-fila-editar" title="Abrirlo para cambiarlo; al guardar reemplaza a este">
+        ${ICONO_EDITAR}
+        Editar
+      </button>
+      <button type="button" class="btn-fila btn-fila-duplicar" title="Usarlo de base para un presupuesto nuevo; este no se modifica">
+        ${ICONO_DUPLICAR}
+        Duplicar
       </button>
     </div>
   `;
@@ -123,6 +160,25 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
   (fila.querySelector(".presupuesto-total") as HTMLElement).textContent =
     formatearMonto(presupuesto.total);
 
+  // Estado: se guarda apenas se cambia. El color acompaña al texto.
+  const selectEstado = fila.querySelector(".estado-select") as HTMLSelectElement;
+  selectEstado.value = presupuesto.estado;
+  selectEstado.dataset.estado = presupuesto.estado;
+
+  selectEstado.addEventListener("change", async () => {
+    const nuevo = selectEstado.value as EstadoPresupuesto;
+
+    try {
+      await cambiarEstadoPresupuesto(presupuesto.id, nuevo);
+      presupuesto.estado = nuevo;
+      selectEstado.dataset.estado = nuevo;
+    } catch (e) {
+      console.error("No se pudo cambiar el estado del presupuesto:", e);
+      mostrarToast("No se pudo guardar el estado", "error");
+      selectEstado.value = presupuesto.estado;
+    }
+  });
+
   fila.querySelector(".btn-fila-ver")?.addEventListener("click", async () => {
     await mostrarPreview(presupuesto.datos, presupuesto.creadoEn);
   });
@@ -132,6 +188,14 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
     ?.addEventListener("click", async () => {
       await generarPDF(presupuesto.datos, presupuesto.creadoEn);
     });
+
+  fila.querySelector(".btn-fila-editar")?.addEventListener("click", () => {
+    opciones.onEditar(presupuesto);
+  });
+
+  fila.querySelector(".btn-fila-duplicar")?.addEventListener("click", () => {
+    opciones.onDuplicar(presupuesto);
+  });
 
   return fila;
 }

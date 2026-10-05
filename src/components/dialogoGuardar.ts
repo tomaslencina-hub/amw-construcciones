@@ -7,7 +7,10 @@ export type RespuestaGuardado = "guardar" | "no-guardar" | null;
  */
 export function preguntarGuardado(
   cliente: string,
-  accion: "descargar" | "imprimir"
+  accion: "descargar" | "imprimir",
+  // true cuando se está editando un presupuesto ya guardado: "guardar"
+  // significa reemplazarlo, no crear uno nuevo
+  editando = false
 ): Promise<RespuestaGuardado> {
   return new Promise((resolve) => {
     const nombre = cliente.trim();
@@ -18,7 +21,7 @@ export function preguntarGuardado(
 
     overlay.innerHTML = `
       <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
-        <h2 id="dialogo-titulo">¿Guardar en Clientes?</h2>
+        <h2 id="dialogo-titulo">${editando ? "¿Guardar los cambios?" : "¿Guardar en Clientes?"}</h2>
         <p class="dialogo-texto"></p>
         <div class="dialogo-acciones">
           <button type="button" class="btn-dialogo-cancelar">Cancelar</button>
@@ -36,7 +39,9 @@ export function preguntarGuardado(
     const btnSi = overlay.querySelector(".btn-dialogo-si") as HTMLButtonElement;
 
     // Sin nombre no hay cómo encontrarlo después en el listado
-    if (nombre) {
+    if (nombre && editando) {
+      texto.textContent = `Los cambios van a reemplazar al presupuesto guardado de "${nombre}". Si elegís "Solo ${accion}", el guardado queda como estaba.`;
+    } else if (nombre) {
       texto.textContent = `El presupuesto de "${nombre}" va a quedar en el historial de Clientes para verlo o descargarlo más adelante.`;
     } else {
       texto.textContent =

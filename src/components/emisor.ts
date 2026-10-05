@@ -76,6 +76,20 @@ export function initEmisor() {
   mostrarTipo("amw");
 }
 
+// Deja el selector como estaba en un presupuesto guardado (al editarlo o
+// duplicarlo). No pisa los datos recordados del "otro emisor" habitual:
+// esos solo se guardan cuando se escriben a mano.
+export function establecerEmisor(emisor: Emisor) {
+  if (emisor.tipo === "otro") {
+    campo("nombre").value = emisor.nombre;
+    campo("dni").value = emisor.dni;
+    campo("cuit").value = emisor.cuit;
+    campo("telefono").value = emisor.telefono;
+  }
+
+  mostrarTipo(emisor.tipo);
+}
+
 export function obtenerEmisor(): Emisor {
   if (tipoActual === "amw") {
     return { tipo: "amw" };

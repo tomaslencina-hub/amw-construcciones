@@ -719,12 +719,49 @@ body {
   padding: 4px 18px 4px 20px;
 }
 
+/* Si la ventana es angosta, los botones bajan a un segundo renglón */
 .presupuesto-fila {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 10px 14px;
   padding: 11px 0;
   border-bottom: 1px solid var(--color-border);
+}
+
+.presupuesto-fila .cliente-acciones {
+  margin-left: auto;
+  gap: 6px;
+}
+
+.presupuesto-fila .btn-fila {
+  padding: 8px 11px;
+  font-size: 0.82rem;
+}
+
+/* Aviso de que se está editando un presupuesto guardado */
+.aviso-edicion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1400px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: rgba(226, 147, 47, 0.12);
+  border: 1px solid rgba(226, 147, 47, 0.45);
+  border-radius: 12px;
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.aviso-edicion button {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  font-size: 0.82rem;
 }
 
 .presupuesto-fila:last-child {
@@ -850,6 +887,414 @@ body {
   text-align: center;
   color: var(--color-muted);
   font-size: 0.92rem;
+}
+
+/* Estado del presupuesto: el color acompaña al texto, nunca va solo */
+.estado-select {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.estado-select:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.estado-select[data-estado="pendiente"] {
+  background: rgba(226, 147, 47, 0.16);
+  color: #8a5410;
+}
+
+.estado-select[data-estado="aceptado"] {
+  background: rgba(47, 143, 130, 0.16);
+  color: #1c655b;
+}
+
+.estado-select[data-estado="rechazado"] {
+  background: rgba(220, 38, 38, 0.1);
+  color: #a61b1b;
+}
+
+.estado-select option {
+  background: var(--color-card);
+  color: var(--color-text);
+}
+
+/* ESTADÍSTICAS */
+
+#view-estadisticas {
+  max-width: 1200px;
+}
+
+.filtro-periodo {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 22px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.filtro-opcion {
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+  border-radius: 9px;
+}
+
+.filtro-opcion:hover {
+  color: var(--color-ink);
+  transform: none;
+  filter: none;
+}
+
+.filtro-opcion.activo {
+  background: var(--color-ink-dark);
+  color: #ffffff;
+}
+
+.kpi-fila {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.kpi-etiqueta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.kpi-valor {
+  font-family: var(--font-body);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+
+.kpi-detalle {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.grafico-card {
+  border-top-width: 1px;
+  margin-bottom: 20px;
+}
+
+.grafico-card h2 {
+  margin-bottom: 14px;
+  font-size: 1rem;
+}
+
+.grafico-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-enlace {
+  padding: 4px 0;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-enlace:hover {
+  color: var(--color-ink);
+  transform: none;
+  filter: none;
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.leyenda-muestra {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+/* Gráfico de columnas por mes: eje Y | plot, y debajo el eje X */
+.grafico-meses {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-rows: 220px auto;
+  column-gap: 10px;
+  row-gap: 8px;
+  padding-top: 8px;
+}
+
+.grafico-eje-y,
+.grafico-plot {
+  position: relative;
+}
+
+.grafico-eje-y span {
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.grafico-grilla {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.grafico-columnas {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.grafico-mes {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 6px 6px 0 0;
+  outline: none;
+}
+
+.grafico-mes:hover,
+.grafico-mes:focus-visible {
+  background: rgba(22, 50, 79, 0.05);
+}
+
+/* Barras finas: punta redondeada, base recta */
+.grafico-barra {
+  width: min(14px, 34%);
+  border-radius: 4px 4px 0 0;
+}
+
+.grafico-eje-x {
+  display: flex;
+}
+
+.grafico-eje-x span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.grafico-tooltip {
+  position: fixed;
+  z-index: 1300;
+  min-width: 190px;
+  padding: 10px 12px;
+  background: var(--color-ink-dark);
+  color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 12px 26px -10px rgba(16, 31, 51, 0.5);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.grafico-tooltip-titulo {
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.grafico-tooltip-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.grafico-tooltip-clave {
+  width: 12px;
+  height: 3px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.grafico-tooltip-etiqueta {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tabla-estadisticas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla-estadisticas th,
+.tabla-estadisticas td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: right;
+}
+
+.tabla-estadisticas th {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.tabla-estadisticas th:first-child,
+.tabla-estadisticas td:first-child {
+  text-align: left;
+}
+
+.estadisticas-dos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.estadisticas-sin-datos {
+  margin: 0;
+  padding: 18px 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+/* Mano de obra / materiales: una barra partida, con 2px de aire */
+.composicion-barra {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+  margin-bottom: 16px;
+}
+
+.composicion-segmento {
+  min-width: 4px;
+  outline: none;
+}
+
+.composicion-segmento:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.composicion-segmento:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.composicion-segmento:only-child {
+  border-radius: 4px;
+}
+
+.composicion-segmento:hover,
+.composicion-segmento:focus-visible {
+  filter: brightness(1.1);
+}
+
+.composicion-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 0.9rem;
+}
+
+.composicion-etiqueta {
+  flex: 1;
+}
+
+.composicion-monto {
+  min-width: 130px;
+  text-align: right;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ranking de clientes: barras horizontales con el valor en la punta */
+.ranking-fila {
+  display: grid;
+  grid-template-columns: minmax(90px, 32%) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 7px 6px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.ranking-fila:hover,
+.ranking-fila:focus-visible {
+  background: rgba(22, 50, 79, 0.05);
+}
+
+.ranking-nombre {
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-pista {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-barra {
+  height: 14px;
+  min-width: 3px;
+  background: #3f6fa8;
+  border-radius: 0 4px 4px 0;
+}
+
+.ranking-valor {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  white-space: nowrap;
 }
 
 /* PROVEEDORES */

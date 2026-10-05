@@ -1,5 +1,5 @@
 import { confirmar } from "./dialogos";
-import { obtenerEmisor, type Emisor } from "./emisor";
+import { establecerEmisor, obtenerEmisor, type Emisor } from "./emisor";
 
 export interface ItemPresupuesto {
   descripcion: string;
@@ -103,7 +103,9 @@ export function initFormulario() {
       `$ ${totalGeneral.toFixed(2)}`;
   }
 
-  function crearFilaItem() {
+  // Si se pasa un ítem, la fila arranca con sus datos (al editar o
+  // duplicar un presupuesto guardado)
+  function crearFilaItem(item?: ItemPresupuesto) {
     const div = document.createElement("div");
     div.className = "fila-presupuesto";
 
@@ -138,6 +140,21 @@ export function initFormulario() {
       actualizarTotales();
     });
 
+    if (item) {
+      (div.querySelector(".input-descripcion") as HTMLInputElement).value =
+        item.descripcion;
+      (div.querySelector(".input-unidad") as HTMLInputElement).value =
+        item.unidad;
+
+      // Los ceros se dejan vacíos, como en una fila sin completar
+      cant.value = item.cantidad ? String(item.cantidad) : "";
+      precio.value = item.precio ? String(item.precio) : "";
+
+      if (item.cantidad || item.precio) {
+        total.value = (item.cantidad * item.precio).toFixed(2);
+      }
+    }
+
     return div;
   }
 
@@ -161,7 +178,8 @@ export function initFormulario() {
     </div>
   `;
 
-  function crearTarea() {
+  // Si se pasa una tarea, arranca con su nombre y sus ítems
+  function crearTarea(tarea?: Tarea) {
     const div = document.createElement("div");
     div.className = "tarea-card";
 
@@ -271,9 +289,17 @@ export function initFormulario() {
       actualizarTotales();
     });
 
-    // Cada tarea nueva arranca con una fila de ejemplo en cada sección
-    contenedorManoObra.appendChild(crearFilaItem());
-    contenedorMateriales.appendChild(crearFilaItem());
+    if (tarea) {
+      (div.querySelector(".tarea-nombre") as HTMLInputElement).value =
+        tarea.nombre === "Sin nombre" ? "" : tarea.nombre;
+
+      contenedorManoObra.append(...tarea.manoObra.map(crearFilaItem));
+      contenedorMateriales.append(...tarea.materiales.map(crearFilaItem));
+    } else {
+      // Cada tarea nueva arranca con una fila de ejemplo en cada sección
+      contenedorManoObra.appendChild(crearFilaItem());
+      contenedorMateriales.appendChild(crearFilaItem());
+    }
 
     return div;
   }
@@ -329,13 +355,41 @@ export function initFormulario() {
     contenedorTareas.querySelector<HTMLInputElement>(".tarea-nombre")?.focus();
   }
 
+  // Vuelca en el formulario un presupuesto completo (tareas, ítems,
+  // cliente, observaciones y emisor), para editarlo o usarlo de base
+  function cargarDatos(datos: DatosPresupuesto) {
+    const tareas = datos.tareas.map((tarea) => crearTarea(tarea));
+
+    contenedorTareas.replaceChildren(
+      ...(tareas.length > 0 ? tareas : [crearTarea()])
+    );
+    renumerarTareas();
+
+    (document.getElementById("cliente") as HTMLInputElement).value =
+      datos.cliente;
+    (document.getElementById("fecha") as HTMLInputElement).value = datos.fecha;
+    (document.getElementById("observaciones") as HTMLTextAreaElement).value =
+      datos.observaciones;
+
+    establecerEmisor(datos.emisor ?? { tipo: "amw" });
+
+    actualizarTotales();
+
+    document.querySelector(".app-content")?.scrollTo({ top: 0 });
+  }
+
   // Arranca con una tarea inicial para no abrir la app vacía
   contenedorTareas.appendChild(crearTarea());
 
   renumerarTareas();
   actualizarTotales();
 
-  return { limpiarFormulario, tieneDatosCargados, iniciarParaCliente };
+  return {
+    limpiarFormulario,
+    tieneDatosCargados,
+    iniciarParaCliente,
+    cargarDatos,
+  };
 }
 
 export function obtenerDatosPresupuesto(): DatosPresupuesto {

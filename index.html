@@ -54,6 +54,16 @@
           </svg>
           Proveedores
         </button>
+
+        <button class="nav-item" data-view="estadisticas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="20" x2="20" y2="20" />
+            <rect x="6" y="11" width="3" height="6" rx="0.6" />
+            <rect x="11" y="6" width="3" height="11" rx="0.6" />
+            <rect x="16" y="9" width="3" height="8" rx="0.6" />
+          </svg>
+          Estadísticas
+        </button>
       </div>
 
       <!-- Cierra la app (la ventana no tiene barra de título propia) -->
@@ -83,6 +93,12 @@
       <!-- Vista: Presupuesto -->
       <section class="view" id="view-presupuesto">
         <h1 class="view-title">Presupuesto</h1>
+
+        <!-- Aparece mientras se edita un presupuesto guardado (main.ts) -->
+        <div id="aviso-edicion" class="aviso-edicion" hidden>
+          <span id="aviso-edicion-texto"></span>
+          <button type="button" id="btn-cancelar-edicion">Cancelar edición</button>
+        </div>
 
         <div class="dashboard">
 
@@ -322,6 +338,55 @@
         <div id="proveedores-grid" class="proveedores-grid"></div>
 
         <p id="proveedores-vacio" class="clientes-vacio" hidden></p>
+      </section>
+
+      <!-- Vista: Estadísticas (se arma en estadisticas.ts) -->
+      <section class="view" id="view-estadisticas" hidden>
+        <div class="view-header">
+          <h1 class="view-title">Estadísticas</h1>
+        </div>
+
+        <!-- El período filtra todo lo que está debajo -->
+        <div class="filtro-periodo" role="radiogroup" aria-label="Período">
+          <button type="button" class="filtro-opcion" role="radio" data-periodo="anio">Este año</button>
+          <button type="button" class="filtro-opcion" role="radio" data-periodo="12m">Últimos 12 meses</button>
+          <button type="button" class="filtro-opcion" role="radio" data-periodo="todo">Todo</button>
+        </div>
+
+        <div id="estadisticas-contenido">
+
+          <div id="kpis" class="kpi-fila"></div>
+
+          <div class="card grafico-card">
+            <div class="grafico-header">
+              <h2>Presupuestado y aceptado por mes</h2>
+              <button type="button" id="btn-tabla-meses" class="btn-enlace">Ver tabla</button>
+            </div>
+
+            <div id="leyenda-meses" class="leyenda">
+              <span><i class="leyenda-muestra" style="background: #3f6fa8"></i>Presupuestado</span>
+              <span><i class="leyenda-muestra" style="background: #e2932f"></i>Aceptado</span>
+            </div>
+
+            <div id="grafico-meses" class="grafico-meses"></div>
+            <div id="tabla-meses" hidden></div>
+          </div>
+
+          <div class="estadisticas-dos">
+            <div class="card grafico-card">
+              <h2>Mano de obra y materiales</h2>
+              <div id="composicion"></div>
+            </div>
+
+            <div class="card grafico-card">
+              <h2>Clientes más presupuestados</h2>
+              <div id="top-clientes"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <p id="estadisticas-vacio" class="clientes-vacio" hidden></p>
       </section>
 
       </div>

@@ -1,11 +1,15 @@
 import Database from "@tauri-apps/plugin-sql";
 import type { DatosPresupuesto } from "./formulario";
 
+// Respuesta del cliente al presupuesto. Todos arrancan en "pendiente".
+export type EstadoPresupuesto = "pendiente" | "aceptado" | "rechazado";
+
 export interface PresupuestoGuardado {
   id: number;
   cliente: string;
   creadoEn: Date;
   total: number;
+  estado: EstadoPresupuesto;
   datos: DatosPresupuesto;
 }
 
@@ -44,6 +48,7 @@ interface FilaPresupuesto {
   cliente: string;
   creado_en: string;
   total: number;
+  estado: EstadoPresupuesto;
   datos: string;
 }
 
@@ -62,9 +67,22 @@ function obtenerDB(): Promise<Database> {
           cliente TEXT NOT NULL,
           creado_en TEXT NOT NULL,
           total REAL NOT NULL,
-          datos TEXT NOT NULL
+          datos TEXT NOT NULL,
+          estado TEXT NOT NULL DEFAULT 'pendiente'
         )
       `);
+
+      // Las bases creadas antes de que existiera el estado no tienen la
+      // columna: se agrega (los presupuestos viejos quedan "pendiente").
+      const columnas = await db.select<{ name: string }[]>(
+        "SELECT name FROM pragma_table_info('presupuestos')"
+      );
+
+      if (!columnas.some((columna) => columna.name === "estado")) {
+        await db.execute(
+          "ALTER TABLE presupuestos ADD COLUMN estado TEXT NOT NULL DEFAULT 'pendiente'"
+        );
+      }
 
       await db.execute(`
         CREATE TABLE IF NOT EXISTS proveedores (
@@ -128,7 +146,7 @@ export async function listarPresupuestos(): Promise<PresupuestoGuardado[]> {
   const db = await obtenerDB();
 
   const filas = await db.select<FilaPresupuesto[]>(
-    "SELECT id, cliente, creado_en, total, datos FROM presupuestos ORDER BY creado_en DESC, id DESC"
+    "SELECT id, cliente, creado_en, total, estado, datos FROM presupuestos ORDER BY creado_en DESC, id DESC"
   );
 
   return filas.map((fila) => ({
@@ -136,8 +154,35 @@ export async function listarPresupuestos(): Promise<PresupuestoGuardado[]> {
     cliente: fila.cliente,
     creadoEn: new Date(fila.creado_en),
     total: fila.total,
+    estado: fila.estado,
     datos: JSON.parse(fila.datos) as DatosPresupuesto,
   }));
+}
+
+// Reemplaza el contenido de un presupuesto ya guardado (edición). Conserva
+// su fecha de creación y su estado.
+export async function actualizarPresupuesto(
+  id: number,
+  datos: DatosPresupuesto
+): Promise<void> {
+  const db = await obtenerDB();
+
+  await db.execute(
+    "UPDATE presupuestos SET cliente = $1, total = $2, datos = $3 WHERE id = $4",
+    [datos.cliente.trim(), datos.totalGeneral, JSON.stringify(datos), id]
+  );
+}
+
+export async function cambiarEstadoPresupuesto(
+  id: number,
+  estado: EstadoPresupuesto
+): Promise<void> {
+  const db = await obtenerDB();
+
+  await db.execute("UPDATE presupuestos SET estado = $1 WHERE id = $2", [
+    estado,
+    id,
+  ]);
 }
 
 // --- Proveedores y sus materiales ---
