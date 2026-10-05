@@ -67,8 +67,13 @@ function crearFila(presupuesto: PresupuestoGuardado) {
   });
   const tareas = presupuesto.datos.tareas.length;
 
+  // Si no se emitió como A.M.W., se aclara a nombre de quién salió
+  const emisor = presupuesto.datos.emisor;
+  const emitidoPor =
+    emisor?.tipo === "otro" ? ` · Emitido por ${emisor.nombre}` : "";
+
   (fila.querySelector(".cliente-meta") as HTMLElement).textContent =
-    `${fecha}, ${hora} hs · ${tareas} tarea${tareas === 1 ? "" : "s"}`;
+    `${fecha}, ${hora} hs · ${tareas} tarea${tareas === 1 ? "" : "s"}${emitidoPor}`;
 
   (fila.querySelector(".cliente-total strong") as HTMLElement).textContent =
     formatearMonto(presupuesto.total);

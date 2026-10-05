@@ -335,6 +335,73 @@ body {
   color: var(--color-amber);
 }
 
+/* DISEÑO DEL PDF (selector de emisor) */
+
+.card-emisor {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.card-emisor h2 {
+  margin-bottom: 14px;
+}
+
+.segmentado {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.segmento {
+  padding: 9px 10px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  border-radius: 9px;
+}
+
+.segmento:hover {
+  color: var(--color-ink);
+  transform: none;
+  filter: none;
+}
+
+.segmento.activo {
+  background: var(--color-ink-dark);
+  color: #ffffff;
+}
+
+.emisor-campos {
+  margin-top: 16px;
+}
+
+.emisor-campos .input-group {
+  margin-bottom: 12px;
+}
+
+.emisor-campos .input-group:last-child {
+  margin-bottom: 0;
+}
+
+.emisor-campos label {
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+}
+
+.emisor-campos input {
+  padding: 9px 11px;
+}
+
+.emisor-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 /* TAREAS */
 
 #tareas-contenedor {

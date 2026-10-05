@@ -1,4 +1,5 @@
 import { confirmar } from "./dialogos";
+import { obtenerEmisor, type Emisor } from "./emisor";
 
 export interface ItemPresupuesto {
   descripcion: string;
@@ -22,6 +23,9 @@ export interface DatosPresupuesto {
   subtotalMano: number;
   subtotalMateriales: number;
   totalGeneral: number;
+  // Define el diseño del PDF. Los presupuestos guardados antes de que
+  // existiera esta opción no lo tienen: se toman como de A.M.W.
+  emisor?: Emisor;
 }
 
 const ICONO_BORRAR = `
@@ -376,5 +380,6 @@ export function obtenerDatosPresupuesto(): DatosPresupuesto {
     subtotalMano,
     subtotalMateriales,
     totalGeneral: subtotalMano + subtotalMateriales,
+    emisor: obtenerEmisor(),
   };
 }

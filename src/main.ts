@@ -19,9 +19,11 @@ import { initProveedores } from "./components/proveedores";
 import { mostrarToast } from "./components/toast";
 import { preguntarGuardado } from "./components/dialogoGuardar";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { initEmisor, validarEmisor } from "./components/emisor";
 
 comprobarActualizaciones();
 initNavegacion();
+initEmisor();
 const { limpiarFormulario } = initFormulario();
 initClientes();
 initProveedores();
@@ -30,9 +32,13 @@ initProveedores();
 document
   .getElementById("btn-preview")
   ?.addEventListener("click", async () => {
-    await mostrarPreview(
-      obtenerDatosPresupuesto()
-    );
+    const datos = obtenerDatosPresupuesto();
+
+    if (!validarEmisor(datos.emisor!)) {
+      return;
+    }
+
+    await mostrarPreview(datos);
   });
 
 // Imprimir: abre la vista previa (el PDF real) y dispara el
@@ -57,6 +63,11 @@ async function imprimir(datos: DatosPresupuesto) {
 // después hace la acción y deja el formulario limpio para el próximo.
 async function finalizarPresupuesto(accion: "descargar" | "imprimir") {
   const datos = obtenerDatosPresupuesto();
+
+  if (!validarEmisor(datos.emisor!)) {
+    return;
+  }
+
   const respuesta = await preguntarGuardado(datos.cliente, accion);
 
   if (!respuesta) {

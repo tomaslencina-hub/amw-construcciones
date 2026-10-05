@@ -138,9 +138,59 @@
 
               <textarea
                 id="observaciones"
-                rows="5"
+                rows="3"
                 placeholder="Ej: El presupuesto no incluye pintura, plazo estimado 15 días, etc."
               ></textarea>
+            </div>
+
+          </div>
+
+          <!-- Diseño del PDF: A.M.W. u otro emisor (se arma en emisor.ts) -->
+          <div class="card card-emisor">
+
+            <h2>
+              <span class="icon-badge icon-client" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6" />
+                  <line x1="8" y1="13" x2="16" y2="13" />
+                  <line x1="8" y1="17" x2="13" y2="17" />
+                </svg>
+              </span>
+              Diseño del PDF
+            </h2>
+
+            <div class="segmentado" role="radiogroup" aria-label="Diseño del PDF">
+              <button type="button" class="segmento" role="radio" data-emisor="amw">
+                A.M.W.
+              </button>
+              <button type="button" class="segmento" role="radio" data-emisor="otro">
+                Otro emisor
+              </button>
+            </div>
+
+            <div id="emisor-campos" class="emisor-campos" hidden>
+              <div class="input-group">
+                <label for="emisor-nombre">Nombre y apellido</label>
+                <input type="text" id="emisor-nombre" placeholder="Quien emite el presupuesto">
+              </div>
+
+              <div class="emisor-fila">
+                <div class="input-group">
+                  <label for="emisor-dni">DNI</label>
+                  <input type="text" id="emisor-dni" placeholder="Opcional">
+                </div>
+
+                <div class="input-group">
+                  <label for="emisor-cuit">CUIT</label>
+                  <input type="text" id="emisor-cuit" placeholder="Opcional">
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="emisor-telefono">Teléfono</label>
+                <input type="text" id="emisor-telefono" placeholder="Opcional">
+              </div>
             </div>
 
           </div>
