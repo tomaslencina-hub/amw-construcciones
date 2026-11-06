@@ -6,6 +6,8 @@ export type EstadoPresupuesto = "pendiente" | "aceptado" | "rechazado";
 
 export interface PresupuestoGuardado {
   id: number;
+  // Número que figura en el PDF (1, 2, 3...)
+  numero: number;
   cliente: string;
   creadoEn: Date;
   total: number;
@@ -45,6 +47,7 @@ interface FilaMaterial {
 
 interface FilaPresupuesto {
   id: number;
+  numero: number;
   cliente: string;
   creado_en: string;
   total: number;
@@ -84,6 +87,28 @@ function obtenerDB(): Promise<Database> {
         );
       }
 
+      // Lo mismo con el número de presupuesto: los viejos toman su id, que
+      // ya sigue el orden en que se crearon.
+      if (!columnas.some((columna) => columna.name === "numero")) {
+        await db.execute("ALTER TABLE presupuestos ADD COLUMN numero INTEGER");
+        await db.execute(
+          "UPDATE presupuestos SET numero = id WHERE numero IS NULL"
+        );
+      }
+
+      // Último número de presupuesto usado. Es aparte de la tabla porque
+      // también se numeran los PDF que no se guardan en Clientes.
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS numeracion (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          ultimo INTEGER NOT NULL
+        )
+      `);
+
+      await db.execute(
+        "INSERT OR IGNORE INTO numeracion (id, ultimo) SELECT 1, COALESCE(MAX(numero), 0) FROM presupuestos"
+      );
+
       await db.execute(`
         CREATE TABLE IF NOT EXISTS proveedores (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -116,29 +141,38 @@ function obtenerDB(): Promise<Database> {
   return dbPromise;
 }
 
+// Toma el siguiente número de presupuesto (1, 2, 3...). Una vez usado no
+// se repite, aunque ese PDF no se guarde en Clientes.
+export async function reservarNumero(): Promise<number> {
+  const db = await obtenerDB();
+
+  await db.execute("UPDATE numeracion SET ultimo = ultimo + 1 WHERE id = 1");
+
+  const filas = await db.select<{ ultimo: number }[]>(
+    "SELECT ultimo FROM numeracion WHERE id = 1"
+  );
+
+  return filas[0].ultimo;
+}
+
 /**
  * Guarda el presupuesto completo (no el PDF): con esos datos se vuelve a
  * armar el mismo documento cuando se lo quiere ver o descargar de nuevo.
- * Si ya hay uno idéntico guardado (misma descarga repetida), no lo duplica.
  */
 export async function guardarPresupuesto(
   datos: DatosPresupuesto
 ): Promise<void> {
   const db = await obtenerDB();
-  const json = JSON.stringify(datos);
-
-  const existentes = await db.select<{ id: number }[]>(
-    "SELECT id FROM presupuestos WHERE datos = $1 LIMIT 1",
-    [json]
-  );
-
-  if (existentes.length > 0) {
-    return;
-  }
 
   await db.execute(
-    "INSERT INTO presupuestos (cliente, creado_en, total, datos) VALUES ($1, $2, $3, $4)",
-    [datos.cliente.trim(), new Date().toISOString(), datos.totalGeneral, json]
+    "INSERT INTO presupuestos (cliente, creado_en, total, datos, numero) VALUES ($1, $2, $3, $4, $5)",
+    [
+      datos.cliente.trim(),
+      new Date().toISOString(),
+      datos.totalGeneral,
+      JSON.stringify(datos),
+      datos.numero ?? null,
+    ]
   );
 }
 
@@ -146,16 +180,22 @@ export async function listarPresupuestos(): Promise<PresupuestoGuardado[]> {
   const db = await obtenerDB();
 
   const filas = await db.select<FilaPresupuesto[]>(
-    "SELECT id, cliente, creado_en, total, estado, datos FROM presupuestos ORDER BY creado_en DESC, id DESC"
+    "SELECT id, numero, cliente, creado_en, total, estado, datos FROM presupuestos ORDER BY creado_en DESC, id DESC"
   );
 
+  // El número va también dentro de los datos, para que salga en el PDF
+  // (los guardados antes de la numeración no lo tenían ahí).
   return filas.map((fila) => ({
     id: fila.id,
+    numero: fila.numero,
     cliente: fila.cliente,
     creadoEn: new Date(fila.creado_en),
     total: fila.total,
     estado: fila.estado,
-    datos: JSON.parse(fila.datos) as DatosPresupuesto,
+    datos: {
+      ...(JSON.parse(fila.datos) as DatosPresupuesto),
+      numero: fila.numero,
+    },
   }));
 }
 

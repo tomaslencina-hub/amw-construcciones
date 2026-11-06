@@ -8,7 +8,7 @@ import { mostrarToast } from "./toast";
 import { generarPDF } from "./pdf";
 import { mostrarPreview } from "./preview";
 import { crearSelectorEstado } from "./selectorEstado";
-import { crearAvatar, normalizar } from "./utils";
+import { crearAvatar, formatearNumero, normalizar } from "./utils";
 
 const ICONO_VER = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -143,7 +143,7 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
   });
 
   (fila.querySelector(".presupuesto-info strong") as HTMLElement).textContent =
-    `${fecha}, ${hora} hs`;
+    `N° ${formatearNumero(presupuesto.numero)} · ${fecha}, ${hora} hs`;
 
   // Si no se emitió como A.M.W., se aclara a nombre de quién salió
   const emisor = presupuesto.datos.emisor;
@@ -269,7 +269,24 @@ function render() {
   );
 
   const grupos = agruparPorCliente(presupuestos);
-  const visibles = grupos.filter((g) => g.clave.includes(filtro));
+
+  // Si se busca un número ("12", "0012", "n° 12"), se muestra ese
+  // presupuesto solo, dentro de la tarjeta de su cliente
+  const numeroBuscado = /^(n°?|#)?\s*\d+$/.test(filtro)
+    ? Number(filtro.replace(/\D/g, ""))
+    : null;
+
+  const visibles =
+    numeroBuscado !== null
+      ? grupos
+          .map((g) => ({
+            ...g,
+            presupuestos: g.presupuestos.filter(
+              (p) => p.numero === numeroBuscado
+            ),
+          }))
+          .filter((g) => g.presupuestos.length > 0)
+      : grupos.filter((g) => g.clave.includes(filtro));
 
   lista.replaceChildren(...visibles.map(crearTarjetaCliente));
 
@@ -287,7 +304,9 @@ function render() {
     vacio.textContent =
       "Todavía no hay presupuestos guardados. Aparecen acá cuando descargás un PDF.";
   } else {
-    vacio.textContent = "No hay clientes que coincidan con la búsqueda.";
+    vacio.textContent = numeroBuscado !== null
+      ? "No hay ningún presupuesto guardado con ese número."
+      : "No hay clientes que coincidan con la búsqueda.";
   }
 }
 

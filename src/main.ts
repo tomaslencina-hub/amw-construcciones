@@ -17,6 +17,7 @@ import { confirmar } from "./components/dialogos";
 import {
   actualizarPresupuesto,
   guardarPresupuesto,
+  reservarNumero,
   type PresupuestoGuardado,
 } from "./components/db";
 import { initClientes, refrescarClientes } from "./components/clientes";
@@ -174,6 +175,16 @@ async function finalizarPresupuesto(accion: "descargar" | "imprimir") {
   );
 
   if (!respuesta) {
+    return;
+  }
+
+  // Todo PDF descargado o impreso lleva número, se guarde o no. Al editar
+  // uno guardado se mantiene el suyo.
+  try {
+    datos.numero = editado ? editado.numero : await reservarNumero();
+  } catch (e) {
+    console.error("No se pudo asignar el número de presupuesto:", e);
+    mostrarToast("No se pudo asignar el número del presupuesto", "error");
     return;
   }
 

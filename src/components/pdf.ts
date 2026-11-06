@@ -5,7 +5,7 @@ import autoTable, { type CellDef, type UserOptions } from "jspdf-autotable";
 import type { DatosPresupuesto, ItemPresupuesto } from "./formulario";
 import type { Emisor } from "./emisor";
 import { mostrarToast } from "./toast";
-import { formatearUnidad } from "./utils";
+import { formatearNumero, formatearUnidad } from "./utils";
 
 /**
  * Datos de la empresa que aparecen en el membrete y en el pie del PDF.
@@ -131,6 +131,9 @@ export async function construirPDF(
     ? datos.fecha.split("-").reverse().join("/")
     : formatearFecha(fechaGeneracion);
 
+  // "N° 0012" (la vista previa de uno que se está cargando no tiene)
+  const numero = datos.numero ? `N° ${formatearNumero(datos.numero)}` : "";
+
   const nuevaPagina = () => {
     doc.addPage();
     return inicioPaginaNueva;
@@ -204,17 +207,28 @@ export async function construirPDF(
     doc.setTextColor(...tema.ink);
     doc.text("PRESUPUESTO", derecha, 23, { align: "right" });
 
+    // Con número, la fecha y la validez bajan un renglón
+    let datosY = 29;
+
+    if (numero) {
+      doc.setFontSize(11);
+      doc.setTextColor(...tema.acento);
+      doc.text(numero, derecha, 29.5, { align: "right" });
+      datosY = 35;
+    }
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(...tema.muted);
-    doc.text(`Fecha de emisión: ${fechaEmision}`, derecha, 29, {
+    doc.text(`Fecha de emisión: ${fechaEmision}`, derecha, datosY, {
       align: "right",
     });
 
     if (EMPRESA.validezDias) {
-      doc.text(`Validez: ${EMPRESA.validezDias} días`, derecha, 33.5, {
+      doc.text(`Validez: ${EMPRESA.validezDias} días`, derecha, datosY + 4.5, {
         align: "right",
       });
+      finMembreteY = Math.max(finMembreteY, datosY + 4.5);
     }
   } else {
     // Otro emisor: sin logo. El nombre de la persona hace de membrete,
@@ -242,7 +256,12 @@ export async function construirPDF(
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(...tema.muted);
-    doc.text("PRESUPUESTO", derecha, 20, { align: "right" });
+    doc.text(
+      numero ? `PRESUPUESTO  ${numero}` : "PRESUPUESTO",
+      derecha,
+      20,
+      { align: "right" }
+    );
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
@@ -680,7 +699,7 @@ export async function construirPDF(
     doc.setTextColor(...tema.muted);
 
     const pieIzquierdo = [
-      `${nombrePie} · Presupuesto emitido el ${formatearFecha(fechaGeneracion)}`,
+      `${nombrePie} · Presupuesto ${numero ? `${numero} ` : ""}emitido el ${formatearFecha(fechaGeneracion)}`,
       contacto,
     ]
       .filter(Boolean)
@@ -700,7 +719,15 @@ export async function generarPDF(
   fechaGeneracion?: Date
 ): Promise<void> {
   const doc = await construirPDF(datos, fechaGeneracion);
-  const nombre = `Presupuesto-${datos.cliente || "cliente"}`;
+  // "Presupuesto 0012 - María González"
+  const nombre = [
+    "Presupuesto",
+    datos.numero ? formatearNumero(datos.numero) : "",
+    "-",
+    datos.cliente.trim() || "cliente",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   let ruta: string;
 

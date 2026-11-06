@@ -7,6 +7,11 @@ export function normalizar(texto: string) {
     .trim();
 }
 
+// Número de presupuesto con ceros adelante: 12 → "0012"
+export function formatearNumero(numero: number) {
+  return String(numero).padStart(4, "0");
+}
+
 const SUPERINDICES: Record<string, string> = { "2": "²", "3": "³" };
 
 // Escribe las unidades de superficie y volumen con superíndice:

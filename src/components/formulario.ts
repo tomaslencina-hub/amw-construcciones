@@ -28,6 +28,9 @@ export interface DatosPresupuesto {
   // Define el diseño del PDF. Los presupuestos guardados antes de que
   // existiera esta opción no lo tienen: se toman como de A.M.W.
   emisor?: Emisor;
+  // Se asigna al descargar o imprimir. La vista previa mientras se carga
+  // todavía no lo tiene, y ese PDF sale sin número.
+  numero?: number;
 }
 
 const ICONO_BORRAR = `
