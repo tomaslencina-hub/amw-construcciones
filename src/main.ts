@@ -26,10 +26,12 @@ import { mostrarToast } from "./components/toast";
 import { preguntarGuardado } from "./components/dialogoGuardar";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { initEmisor, validarEmisor } from "./components/emisor";
+import { initSelectorFecha } from "./components/selectorFecha";
 
 comprobarActualizaciones();
 initNavegacion();
 initEmisor();
+initSelectorFecha();
 const { limpiarFormulario, tieneDatosCargados, iniciarParaCliente, cargarDatos } =
   initFormulario();
 

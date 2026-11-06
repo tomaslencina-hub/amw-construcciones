@@ -5,6 +5,7 @@ import autoTable, { type CellDef, type UserOptions } from "jspdf-autotable";
 import type { DatosPresupuesto, ItemPresupuesto } from "./formulario";
 import type { Emisor } from "./emisor";
 import { mostrarToast } from "./toast";
+import { formatearUnidad } from "./utils";
 
 /**
  * Datos de la empresa que aparecen en el membrete y en el pie del PDF.
@@ -466,7 +467,7 @@ export async function construirPDF(
     items.map((i) => [
       i.descripcion || "-",
       formatearCantidad(i.cantidad),
-      i.unidad || "-",
+      formatearUnidad(i.unidad) || "-",
       formatearMonto(i.precio),
       formatearMonto(i.total),
     ]);

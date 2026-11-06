@@ -7,6 +7,7 @@ import {
 import { mostrarToast } from "./toast";
 import { generarPDF } from "./pdf";
 import { mostrarPreview } from "./preview";
+import { crearSelectorEstado } from "./selectorEstado";
 import { crearAvatar, normalizar } from "./utils";
 
 const ICONO_VER = `
@@ -114,11 +115,6 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
       <strong></strong>
       <span></span>
     </div>
-    <select class="estado-select" aria-label="Estado del presupuesto" title="Respuesta del cliente">
-      <option value="pendiente">Pendiente</option>
-      <option value="aceptado">Aceptado</option>
-      <option value="rechazado">Rechazado</option>
-    </select>
     <strong class="presupuesto-total"></strong>
     <div class="cliente-acciones">
       <button type="button" class="btn-fila btn-fila-ver" title="Vista previa">
@@ -161,23 +157,22 @@ function crearFilaPresupuesto(presupuesto: PresupuestoGuardado) {
     formatearMonto(presupuesto.total);
 
   // Estado: se guarda apenas se cambia. El color acompaña al texto.
-  const selectEstado = fila.querySelector(".estado-select") as HTMLSelectElement;
-  selectEstado.value = presupuesto.estado;
-  selectEstado.dataset.estado = presupuesto.estado;
-
-  selectEstado.addEventListener("change", async () => {
-    const nuevo = selectEstado.value as EstadoPresupuesto;
-
-    try {
-      await cambiarEstadoPresupuesto(presupuesto.id, nuevo);
-      presupuesto.estado = nuevo;
-      selectEstado.dataset.estado = nuevo;
-    } catch (e) {
-      console.error("No se pudo cambiar el estado del presupuesto:", e);
-      mostrarToast("No se pudo guardar el estado", "error");
-      selectEstado.value = presupuesto.estado;
+  const selectorEstado = crearSelectorEstado(
+    presupuesto.estado,
+    async (nuevo: EstadoPresupuesto) => {
+      try {
+        await cambiarEstadoPresupuesto(presupuesto.id, nuevo);
+        presupuesto.estado = nuevo;
+        return true;
+      } catch (e) {
+        console.error("No se pudo cambiar el estado del presupuesto:", e);
+        mostrarToast("No se pudo guardar el estado", "error");
+        return false;
+      }
     }
-  });
+  );
+
+  fila.querySelector(".presupuesto-total")?.before(selectorEstado);
 
   fila.querySelector(".btn-fila-ver")?.addEventListener("click", async () => {
     await mostrarPreview(presupuesto.datos, presupuesto.creadoEn);

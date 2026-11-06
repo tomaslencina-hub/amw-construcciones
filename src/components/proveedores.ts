@@ -12,7 +12,7 @@ import {
 } from "./db";
 import { confirmar, pedirTexto } from "./dialogos";
 import { mostrarToast } from "./toast";
-import { crearAvatar, normalizar } from "./utils";
+import { autoformatearUnidad, crearAvatar, normalizar } from "./utils";
 
 const ICONO_EDITAR = `
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -110,6 +110,8 @@ function agregarCamposMaterial(form: HTMLFormElement, material?: Material) {
     <input name="unidad" class="material-input-unidad" placeholder="Unidad" aria-label="Unidad">
     <input name="precio" type="number" min="0" step="0.01" class="material-input-precio" placeholder="Precio" aria-label="Precio">
   `;
+
+  autoformatearUnidad(campo(form, "unidad"));
 
   if (material) {
     campo(form, "nombre").value = material.nombre;

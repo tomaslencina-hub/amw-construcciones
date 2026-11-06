@@ -7,6 +7,33 @@ export function normalizar(texto: string) {
     .trim();
 }
 
+const SUPERINDICES: Record<string, string> = { "2": "²", "3": "³" };
+
+// Escribe las unidades de superficie y volumen con superíndice:
+// "m2" → "m²", "M3" → "m³", "cm2" → "cm²", "mts2" → "m²", "m^2" → "m²".
+export function formatearUnidad(texto: string) {
+  return texto.replace(
+    /\b(mm|cm|dm|km|mts?|m)\^?([23])\b/gi,
+    (_, base: string, exponente: string) => {
+      const unidad = base.toLowerCase().startsWith("mt")
+        ? "m"
+        : base.toLowerCase();
+      return unidad + SUPERINDICES[exponente];
+    }
+  );
+}
+
+// Aplica formatearUnidad mientras se escribe en un campo de unidad
+export function autoformatearUnidad(input: HTMLInputElement) {
+  input.addEventListener("input", () => {
+    const formateado = formatearUnidad(input.value);
+
+    if (formateado !== input.value) {
+      input.value = formateado;
+    }
+  });
+}
+
 // Cada nombre toma siempre el mismo color
 const COLORES_AVATAR = ["#e2932f", "#2f8f82", "#16324f", "#b4532a", "#5b6bbf"];
 

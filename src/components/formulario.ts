@@ -1,5 +1,7 @@
 import { confirmar } from "./dialogos";
 import { establecerEmisor, obtenerEmisor, type Emisor } from "./emisor";
+import { establecerFecha } from "./selectorFecha";
+import { autoformatearUnidad } from "./utils";
 
 export interface ItemPresupuesto {
   descripcion: string;
@@ -134,6 +136,7 @@ export function initFormulario() {
 
     cant.addEventListener("input", calcular);
     precio.addEventListener("input", calcular);
+    autoformatearUnidad(div.querySelector(".input-unidad") as HTMLInputElement);
 
     btnDelete.addEventListener("click", () => {
       div.remove();
@@ -323,7 +326,7 @@ export function initFormulario() {
     renumerarTareas();
 
     (document.getElementById("cliente") as HTMLInputElement).value = "";
-    (document.getElementById("fecha") as HTMLInputElement).value = "";
+    establecerFecha("");
     (document.getElementById("observaciones") as HTMLTextAreaElement).value =
       "";
 
@@ -367,7 +370,7 @@ export function initFormulario() {
 
     (document.getElementById("cliente") as HTMLInputElement).value =
       datos.cliente;
-    (document.getElementById("fecha") as HTMLInputElement).value = datos.fecha;
+    establecerFecha(datos.fecha);
     (document.getElementById("observaciones") as HTMLTextAreaElement).value =
       datos.observaciones;
 

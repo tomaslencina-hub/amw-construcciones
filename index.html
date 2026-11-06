@@ -143,10 +143,10 @@
 
             <div class="input-group">
               <label>Fecha</label>
-              <input
-                type="date"
-                id="fecha"
-              >
+              <!-- El calendario se arma en selectorFecha.ts; el valor queda
+                   en el input oculto como "aaaa-mm-dd" -->
+              <input type="hidden" id="fecha">
+              <div class="selector-fecha" id="selector-fecha"></div>
             </div>
 
             <div class="input-group">
